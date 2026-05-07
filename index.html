@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- FLAG #0: 你找到 meta 了！這只是熱身 :) -->
+  <meta name="author" content="把你的名字放這裡" />
+  <meta name="description" content="這個頁面沒有什麼好看的。或許有。或許沒有。" />
+  <meta name="robots" content="這裡沒有 flag，去 console 看看" />
+
+  <title>⬛⬛⬛ — CLASSIFIED PROFILE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --green: #00ff41;
+      --green-dim: #00aa2a;
+      --green-dark: #003310;
+      --red: #ff4136;
+      --amber: #ffb700;
+      --bg: #030c03;
+      --surface: #050f05;
+      --border: #00ff4133;
+      --text: #c8ffc8;
+      --redact: #0a0a0a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* CRT scanlines */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.15) 2px,
+        rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* CRT flicker */
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.8; }
+      94% { opacity: 1; }
+      96% { opacity: 0.9; }
+      97% { opacity: 1; }
+    }
+    body { animation: flicker 8s infinite; }
+
+    /* Glitch effect */
+    @keyframes glitch {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-2px); clip-path: inset(20% 0 60% 0); }
+      21% { transform: translateX(2px); clip-path: inset(60% 0 20% 0); }
+      22% { transform: translateX(0); clip-path: none; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes scandown {
+      0% { top: -5%; }
+      100% { top: 105%; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    /* Scan line that moves */
+    .scan-line {
+      position: fixed;
+      left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0.15;
+      top: 0;
+      animation: scandown 6s linear infinite;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(3,12,3,0.95);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      color: var(--green-dim);
+    }
+    .status::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 1.2s infinite;
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    /* ─── TOP CLASSIFIED BANNER ─── */
+    .classified-banner {
+      text-align: center;
+      border: 2px solid var(--red);
+      padding: 0.5rem 2rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .classified-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 8px,
+        rgba(255,65,54,0.05) 8px,
+        rgba(255,65,54,0.05) 16px
+      );
+    }
+    .classified-banner .label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--red);
+      letter-spacing: 0.5em;
+      text-shadow: 0 0 20px var(--red);
+    }
+    .classified-banner .sub {
+      font-size: 0.65rem;
+      color: #ff413688;
+      letter-spacing: 0.3em;
+      margin-top: 0.2rem;
+    }
+
+    /* ─── PROFILE CARD ─── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .avatar-box {
+      border: 1px solid var(--border);
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar-box::after {
+      content: 'FACE\ARECOGNITION\AFAILED';
+      white-space: pre;
+      font-size: 0.6rem;
+      color: var(--red);
+      text-align: center;
+      position: absolute;
+      bottom: 0.5rem;
+      letter-spacing: 0.1em;
+    }
+    .avatar-ascii {
+      font-family: 'VT323', monospace;
+      font-size: 0.85rem;
+      line-height: 1.1;
+      color: var(--green-dim);
+      text-align: center;
+      filter: blur(1px);
+      transition: filter 0.3s;
+    }
+    .avatar-box:hover .avatar-ascii { filter: blur(0); }
+
+    .info-table {
+      width: 100%;
+    }
+    .info-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #00ff4115;
+      align-items: center;
+      gap: 1rem;
+    }
+    .info-label {
+      font-size: 0.7rem;
+      color: var(--green-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .info-value {
+      font-size: 0.95rem;
+    }
+
+    /* REDACT styling */
+    .redact {
+      background: var(--redact);
+      color: transparent;
+      user-select: none;
+      display: inline-block;
+      border-radius: 2px;
+      position: relative;
+      cursor: not-allowed;
+    }
+    .redact::after {
+      content: '████████████';
+      color: #111;
+      letter-spacing: 2px;
+    }
+
+    /* ─── SECTIONS ─── */
+    .section {
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: #00ff410a;
+    }
+    .section-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      color: var(--green);
+      background: var(--green-dark);
+      padding: 0.2rem 0.5rem;
+      border: 1px solid var(--green-dim);
+    }
+    .section-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .section-status {
+      margin-left: auto;
+      font-size: 0.6rem;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 0.1rem 0.4rem;
+    }
+    .section-status.unlocked {
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .section-body {
+      padding: 1.2rem 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    /* ─── CHALLENGE BOARD ─── */
+    .challenge-board {
+      border: 1px solid var(--amber);
+      background: #0a0800;
+      margin-bottom: 2.5rem;
+    }
+    .challenge-board .section-header {
+      background: #ffb70010;
+      border-color: #ffb70040;
+    }
+    .challenge-board .section-title { color: var(--amber); }
+    .challenge-board .section-number {
+      color: var(--amber);
+      background: #3d2a00;
+      border-color: var(--amber);
+    }
+
+    .challenge-list {
+      list-style: none;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .challenge-item {
+      display: grid;
+      grid-template-columns: 2rem 1fr auto;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.82rem;
+    }
+    .c-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      color: var(--amber);
+      text-align: center;
+    }
+    .c-hint {
+      color: #c8c89a;
+    }
+    .c-where {
+      font-size: 0.68rem;
+      color: var(--amber);
+      background: #ffb70015;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid #ffb70040;
+      white-space: nowrap;
+    }
+
+    /* ─── TERMINAL BOX ─── */
+    .terminal {
+      background: #000;
+      border: 1px solid var(--green-dim);
+      padding: 1rem 1.2rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      margin-top: 0.5rem;
+    }
+    .terminal .prompt { color: var(--green); }
+    .terminal .cmd { color: #fff; }
+    .terminal .output { color: var(--green-dim); }
+    .terminal .cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1em;
+      background: var(--green);
+      vertical-align: text-bottom;
+      animation: blink 0.8s infinite;
+    }
+
+    /* ─── HIDDEN ELEMENTS ─── */
+
+    /* Hidden by colour (white on almost-white-ish) — for Q&A */
+    .invisible-text {
+      color: #0d0d0d;
+      background: #0d0d0d;
+      user-select: text;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #111;
+      border-radius: 2px;
+    }
+
+    /* Secret section revealed via konami */
+    #konami-section {
+      display: none;
+      border-color: var(--amber);
+    }
+    #konami-section .section-header {
+      background: #ffb70010;
+      border-color: #ffb70040;
+    }
+    #konami-section .section-title { color: var(--amber); }
+    #konami-section.revealed { display: block; }
+
+    /* Click-to-reveal hobby */
+    .redact-click {
+      background: #1a0000;
+      color: transparent;
+      user-select: none;
+      display: inline-block;
+      cursor: pointer;
+      border: 1px dashed #ff413655;
+      padding: 0 0.3rem;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .redact-click::before {
+      content: '[點我試試]';
+      position: absolute;
+      right: 0; top: -1.2rem;
+      font-size: 0.55rem;
+      color: var(--red);
+      white-space: nowrap;
+    }
+    .redact-click.revealed {
+      background: transparent;
+      color: var(--green);
+      border-color: var(--green-dim);
+    }
+    .redact-click.revealed::before { display: none; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.65rem;
+      color: #00ff4140;
+      letter-spacing: 0.2em;
+    }
+
+    /* ─── GLITCH TEXT ─── */
+    .glitch {
+      position: relative;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--green);
+      text-shadow: 0 0 20px var(--green);
+      letter-spacing: 0.1em;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+    }
+    .glitch::before {
+      color: #0ff;
+      animation: glitch 5s infinite;
+      clip-path: inset(30% 0 60% 0);
+    }
+    .glitch::after {
+      color: #f0f;
+      animation: glitch 5s 0.1s infinite;
+      clip-path: inset(60% 0 10% 0);
+    }
+
+    /* toast */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--green-dark);
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 0.8rem 1.2rem;
+      font-size: 0.8rem;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s;
+      max-width: 300px;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .profile-grid { grid-template-columns: 1fr; }
+      .avatar-box { height: 150px; }
+      .glitch { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scan-line"></div>
+
+<!-- =====================================================
+  FLAG #1 — 基本資料就藏在這裡
+  姓名：[你的名字]
+  系級：[你的系所年級]
+  綽號：[你的綽號]
+  GitHub：https://github.com/[你的帳號]
+
+  提示：查看原始碼就能找到這段 ;)
+====================================================== -->
+
+<header>
+  <div class="logo">SEC-LAB // TARGET DOSSIER</div>
+  <div class="status">SYSTEM ONLINE — CLEARANCE REQUIRED</div>
+</header>
+
+<main>
+
+  <!-- ─── TITLE ─── -->
+  <div style="text-align:center; margin-bottom: 2.5rem;">
+    <p style="font-size:0.7rem; letter-spacing:0.4em; color:var(--green-dim); margin-bottom:0.8rem;">
+      ▸ OSINT CHALLENGE ◂
+    </p>
+    <h1 class="glitch" data-text="[REDACTED]">[REDACTED]</h1>
+    <p style="font-size:0.75rem; color:#00ff4160; margin-top:0.8rem; letter-spacing:0.2em;">
+      DOSSIER ID: 0x??-????-???? &nbsp;|&nbsp; CLASSIFICATION: EYES ONLY
+    </p>
+  </div>
+
+  <!-- ─── CLASSIFIED BANNER ─── -->
+  <div class="classified-banner">
+    <div class="label">⚠ CLASSIFIED ⚠</div>
+    <div class="sub">UNAUTHORISED ACCESS IS ENCOURAGED — THAT'S KIND OF THE POINT</div>
+  </div>
+
+  <!-- ─── CHALLENGE BOARD ─── -->
+  <div class="challenge-board section">
+    <div class="section-header">
+      <span class="section-number">MISSION</span>
+      <span class="section-title">OSINT 任務清單</span>
+    </div>
+    <ul class="challenge-list">
+      <li class="challenge-item">
+        <span class="c-num">01</span>
+        <span class="c-hint">🔍 找到目標的 <strong>姓名、系級、綽號</strong></span>
+        <span class="c-where"><!-- HTML --></span>
+      </li>
+      <li class="challenge-item">
+        <span class="c-num">02</span>
+        <span class="c-hint">🎯 找出目標的 <strong>興趣 & 平常在幹嘛</strong></span>
+        <span class="c-where">F12 → Console</span>
+      </li>
+      <li class="challenge-item">
+        <span class="c-num">03</span>
+        <span class="c-hint">💥 找出目標 <strong>最喜歡的東西</strong></span>
+        <span class="c-where">頁面上某個地方點點看</span>
+      </li>
+      <li class="challenge-item">
+        <span class="c-num">04</span>
+        <span class="c-hint">🧩 解碼目標的 <strong>個性描述</strong></span>
+        <span class="c-where">Base64 decode</span>
+      </li>
+      <li class="challenge-item">
+        <span class="c-num">05</span>
+        <span class="c-hint">🕹️ 找出目標 <strong>為何加入資安實驗室</strong></span>
+        <span class="c-where">↑↑↓↓←→←→BA</span>
+      </li>
+      <li class="challenge-item">
+        <span class="c-num">06</span>
+        <span class="c-hint">👁️ 找到隱藏的 <strong>Q&A 彩蛋</strong></span>
+        <span class="c-where">眼力測試</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ─── PROFILE ─── -->
+  <div class="profile-grid">
+    <div class="avatar-box">
+      <div class="avatar-ascii">
+  .------.<br>
+ /  o  o  \<br>
+|    --    |<br>
+ \  ████  /<br>
+  '------'<br>
+  |      |<br>
+  |      |
+      </div>
+    </div>
+
+    <div class="info-table">
+      <div class="info-row">
+        <span class="info-label">TARGET ID</span>
+        <span class="info-value"><span class="redact">████████████</span></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">ALIAS</span>
+        <span class="info-value"><span class="redact">██████</span></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">UNIT</span>
+        <span class="info-value"><span class="redact">███████████████</span></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">AFFILIATION</span>
+        <span class="info-value" style="color:var(--green);">資安實驗室 // CYBERSEC LAB</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">THREAT LEVEL</span>
+        <span class="info-value" style="color:var(--amber);">⬛ UNKNOWN — PENDING OSINT</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">STATUS</span>
+        <span class="info-value" style="color:var(--green);">
+          <span style="animation:blink 1s infinite; display:inline-block;">●</span>
+          ACTIVE — 歡迎大家來 OSINT 我
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 1: 基本資料 (redacted on page) ─── -->
+  <div class="section" style="margin-bottom:1.5rem;">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <span class="section-title">基本資料</span>
+      <span class="section-status">⬛ REDACTED</span>
+    </div>
+    <div class="section-body">
+      <div class="terminal">
+        <span class="prompt">root@seclab:~$ </span><span class="cmd">cat target_profile.txt</span><br>
+        <span class="output">
+          姓名　　：<span class="redact">████████████</span><br>
+          年級　　：<span class="redact">████████</span><br>
+          系所　　：<span class="redact">████████████</span><br>
+          綽號　　：<span class="redact">██████████</span><br>
+          GitHub　：https://github.com/<span class="redact">████████</span><br>
+        </span>
+        <span class="prompt">root@seclab:~$ </span><span class="cursor"></span>
+      </div>
+      <p style="font-size:0.7rem; color:#00ff4155; margin-top:0.8rem;">
+        💡 hint: 這頁的原始碼藏了不少秘密 — Ctrl+U 或右鍵查看原始碼試試
+      </p>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 2: 興趣 (hidden in console) ─── -->
+  <div class="section" style="margin-bottom:1.5rem;">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <span class="section-title">興趣</span>
+      <span class="section-status">⬛ ENCRYPTED</span>
+    </div>
+    <div class="section-body">
+      <p>此欄位已加密，請透過 <strong style="color:var(--green)">開發者工具</strong> 查看。</p>
+      <br>
+      <div class="terminal">
+        <span class="prompt">root@seclab:~$ </span>
+        <span class="cmd">open DevTools → Console tab</span><br>
+        <span class="output">// 提示：按 F12，或右鍵 → 檢查 → Console</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 3: 喜歡的東西 (click to reveal) ─── -->
+  <div class="section" style="margin-bottom:1.5rem;">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <span class="section-title">喜歡的東西</span>
+      <span class="section-status">⬛ LOCKED</span>
+    </div>
+    <div class="section-body">
+      <p>
+        最喜歡：
+        <span
+          class="redact-click"
+          id="hobby-reveal"
+          onclick="revealHobby()"
+          title="試著點我"
+        >██████████████████████████████</span>
+      </p>
+      <br>
+      <p>
+        最想做的事：
+        <span
+          class="redact-click"
+          id="wishlist-reveal"
+          onclick="revealWishlist()"
+          style="margin-top:0.5rem;"
+        >███████████████████████████████</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 4: 個性 (base64 encoded) ─── -->
+  <div class="section" style="margin-bottom:1.5rem;">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <span class="section-title">個性 / 其他</span>
+      <span class="section-status">⬛ ENCODED</span>
+    </div>
+    <div class="section-body">
+      <p style="margin-bottom:0.8rem;">以下資料以 Base64 編碼。請自行解碼：</p>
+
+      <!-- 
+        把你的個性描述放進去，然後到 https://www.base64encode.org/ 編碼後貼在這裡
+        範例：我是一個很好奇、喜歡動手做的人，外表冷靜但腦子一直在轉
+      -->
+      <div class="terminal" id="encoded-block"
+           data-encoded="5oiR5piv5LiA5YCL5b6F5aW95ZCM5aSq5qmf5YuV5YuV5YeM6Zui55qE5Lq65ZCRCuWwai3n77yJ5a6e5byV5yKD5o6o5YaF5bGFLOi/meWwi+WFiOWZqOW+l+WBt+WCmOW6lAo=">
+      </div>
+      <br>
+      <p style="font-size:0.75rem; color:#00ff4170;">
+        💡 把上面那段字複製，去 <span style="color:var(--green)">base64decode.org</span> 或 console 輸入
+        <code style="color:var(--amber)">atob("[貼這裡]")</code> 解碼
+      </p>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 5: 為何加入 (Konami code) — hidden ─── -->
+  <div id="konami-section" class="section" style="margin-bottom:1.5rem;">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <span class="section-title">🎮 KONAMI UNLOCKED — 為何加入資安實驗室</span>
+      <span class="section-status unlocked">✓ UNLOCKED</span>
+    </div>
+    <div class="section-body" id="konami-content">
+      <!-- 你的內容會在這裡顯示 -->
+    </div>
+  </div>
+
+  <!-- Konami 提示 -->
+  <div class="section" style="margin-bottom:1.5rem; border-color:#ffb70033;" id="konami-hint">
+    <div class="section-header" style="background:#ffb70008; border-color:#ffb70033;">
+      <span class="section-number" style="color:var(--amber); background:#3d2a00; border-color:var(--amber);">05</span>
+      <span class="section-title" style="color:var(--amber);">為何加入資安實驗室</span>
+      <span class="section-status">⬛ LOCKED</span>
+    </div>
+    <div class="section-body">
+      <p style="color:var(--amber);">
+        🕹️ 這個資料需要特殊指令解鎖。
+      </p>
+      <br>
+      <div class="terminal">
+        <span class="output">// 試試 Konami Code：</span><br>
+        <span style="color:var(--amber); letter-spacing:0.2em; font-size:1.1rem;">↑ ↑ ↓ ↓ ← → ← → B A</span><br>
+        <span class="output">// 用鍵盤輸入這串方向鍵</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 6: Q&A (invisible text) ─── -->
+  <div class="section" style="margin-bottom:1.5rem;">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <span class="section-title">Q &amp; A</span>
+      <span class="section-status">👁️ 眼力測試</span>
+    </div>
+    <div class="section-body">
+      <p>這一頁沒什麼特別的東西。</p>
+      <p style="color:#00ff4140; font-size:0.75rem; margin-top:0.5rem;">
+        （這一區沒有隱藏任何資訊，真的，完全沒有，別費心了）
+      </p>
+
+      <!-- Q&A 藏在這裡 — 深色背景，幾乎不可見，但可以選取複製 -->
+      <div class="invisible-text" title="這裡真的沒東西">
+        Q: 你最怕什麼？<br>
+        A: [你的答案]<br><br>
+        Q: 如果不念這個科系你會做什麼？<br>
+        A: [你的答案]<br><br>
+        Q: 對資安實驗室的期望？<br>
+        A: [你的答案]<br><br>
+        Q: 有什麼話想對大家說？<br>
+        A: [你的答案]<br>
+        <br>
+        🎉 恭喜！你找到 Q&A 了。試著選取這段文字就能看到內容。
+      </div>
+
+      <p style="color:#00ff4130; font-size:0.65rem; margin-top:2rem;">
+        hint: 試試 Ctrl+A 或用滑鼠拖曳選取整個區域
+      </p>
+    </div>
+  </div>
+
+  <!-- ─── TERMINAL FOOTER ─── -->
+  <div class="terminal" style="margin-top:2rem;">
+    <span class="output">// 所有 flag 找到了嗎？歡迎來問我 :)</span><br>
+    <span class="prompt">root@seclab:~$ </span>
+    <span class="cmd">echo "good luck, have fun"</span><br>
+    <span class="output">good luck, have fun</span><br>
+    <span class="prompt">root@seclab:~$ </span><span class="cursor"></span>
+  </div>
+
+</main>
+
+<footer>
+  SEC-LAB INTERNAL DOSSIER — FOR AUTHORIZED OSINT PRACTITIONERS ONLY<br>
+  <span style="color:#00ff4120;">建立於 GitHub Pages — 你能找到 repo 嗎？</span>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+// ─── FLAG #2: 興趣 ───────────────────────────────────
+// (在 console 裡顯示，打開 F12 就能看到)
+const interests = [
+  "🎵 [你的興趣1]",
+  "🎮 [你的興趣2]",
+  "💻 [你的興趣3]",
+  "📚 [你的興趣4]",
+  "🌙 [其他]"
+];
+
+console.log(
+  "%c╔══════════════════════════════════════╗",
+  "color: #00ff41; font-family: monospace;"
+);
+console.log(
+  "%c║   🔓 FLAG #2 UNLOCKED: 興趣清單     ║",
+  "color: #00ff41; font-family: monospace; font-weight: bold;"
+);
+console.log(
+  "%c╚══════════════════════════════════════╝",
+  "color: #00ff41; font-family: monospace;"
+);
+interests.forEach((item, i) => {
+  console.log(
+    `%c  [${i+1}] ${item}`,
+    "color: #c8ffc8; font-family: monospace; font-size: 13px;"
+  );
+});
+console.log(
+  "%c\n  💡 還有其他 flag 藏在頁面裡，繼續找！",
+  "color: #ffb700; font-family: monospace;"
+);
+
+// ─── FLAG #3: 喜歡的東西 (click to reveal) ──────────
+function revealHobby() {
+  const el = document.getElementById('hobby-reveal');
+  el.textContent = "[你最喜歡的東西]";  // ← 替換這裡
+  el.classList.add('revealed');
+  showToast("🔓 Flag #3a 解鎖！最喜歡的東西找到了");
+}
+
+function revealWishlist() {
+  const el = document.getElementById('wishlist-reveal');
+  el.textContent = "[你最想做的事]";   // ← 替換這裡
+  el.classList.add('revealed');
+  showToast("🔓 Flag #3b 解鎖！心願清單解鎖");
+}
+
+// ─── FLAG #4: 個性 (base64) ───────────────────────────
+// 把 data-encoded 的值換成你自己編碼的 base64 字串
+// 這裡只是讓大家知道要去找那個 attribute
+const block = document.getElementById('encoded-block');
+const encoded = block.getAttribute('data-encoded');
+block.innerHTML = `
+  <span class="output">// data-encoded attribute 內容：</span><br>
+  <span style="color:#ffb700; word-break:break-all; font-size:0.75rem;">${encoded}</span>
+`;
+
+// ─── FLAG #5: Konami Code ─────────────────────────────
+const konamiCode = [
+  'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+  'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+  'b','a'
+];
+let konamiIdx = 0;
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === konamiCode[konamiIdx]) {
+    konamiIdx++;
+    if (konamiIdx === konamiCode.length) {
+      unlockKonami();
+      konamiIdx = 0;
+    }
+  } else {
+    konamiIdx = 0;
+    if (e.key === konamiCode[0]) konamiIdx = 1;
+  }
+});
+
+function unlockKonami() {
+  const section = document.getElementById('konami-section');
+  const hint = document.getElementById('konami-hint');
+  const content = document.getElementById('konami-content');
+
+  // ↓ 把你加入實驗室的原因放這裡
+  content.innerHTML = `
+    <p style="color:var(--amber); margin-bottom:1rem;">🎮 Konami Code 輸入成功！</p>
+    <p style="line-height:2;">
+      加入原因：<br>
+      [你加入資安實驗室的原因，可以寫得有趣一點]<br><br>
+      對實驗室的想法：<br>
+      [你對這個實驗室的期待和想法]
+    </p>
+  `;
+
+  section.classList.add('revealed');
+  hint.style.display = 'none';
+  showToast("🕹️ Flag #5 解鎖！Konami Code 成功！");
+
+  // 🎉 confetti-ish effect
+  document.body.style.boxShadow = 'inset 0 0 60px rgba(255,183,0,0.2)';
+  setTimeout(() => { document.body.style.boxShadow = ''; }, 2000);
+}
+
+// ─── Toast notification ────────────────────────────────
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ─── Easter egg in console for secret seekers ──────────
+setTimeout(() => {
+  console.log(
+    "%c\n  🕵️ 你還在 console 裡找東西嗎？\n  試試 atob() 解碼頁面上的 base64 字串\n",
+    "color: #555; font-family: monospace; font-size: 11px;"
+  );
+}, 5000);
+</script>
+
+</body>
+</html>
